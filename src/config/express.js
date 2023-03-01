@@ -1,8 +1,9 @@
-import express from "express"
-import morgan from "morgan"
-import cors from "cors"
+import express from "express";
+import morgan from "morgan";
+import cors from "cors";
 require("dotenv").config();
-
+import routes from '../routers';
+import { errors } from 'celebrate'
 class Server {
     constructor(){
         this.app = express();
@@ -22,7 +23,8 @@ class Server {
     }
 
     routes(){
-
+        routes(this.app);
+        this.app.use(errors({ statusCode:400 }));
     }
 
     listen(){

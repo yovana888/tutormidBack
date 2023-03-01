@@ -11,8 +11,6 @@ export default async () => {
         production:{}
     };
 
-    console.log(databases.development.uri, 'check')
-
     const { uri, options } = databases[process.env.NODE_ENV];
 
   return connect(uri, options, (error) => {
