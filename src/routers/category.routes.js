@@ -11,6 +11,7 @@ class CategoryRouter{
                           .post('/',categoryValidation.createRecord(), this.create)
                           .get('/:id', this.getById)
                           .patch('/:id',categoryValidation.updateRecord(), this.updateById)
+                          .delete('/:id', this.deleteById)
     }
 
     async all(req, res){
@@ -31,6 +32,11 @@ class CategoryRouter{
     async updateById(req, res){
         const controller = new categoryController();
         return controller.updateById(req, res);
+    }
+
+    async deleteById(req, res){
+        const controller = new categoryController();
+        return controller.deleteById(req, res);
     }
 
 }

@@ -11,6 +11,7 @@ class NivelRouter{
                           .post('/',nivelValidation.createRecord(), this.create)
                           .get('/:id', this.getById)
                           .patch('/:id',nivelValidation.updateRecord(), this.updateById)
+                          .delete('/:id', this.deleteById)
     }
 
     async all(req, res){
@@ -31,6 +32,11 @@ class NivelRouter{
     async updateById(req, res){
         const controller = new nivelController();
         return controller.updateById(req, res);
+    }
+
+    async deleteById(req, res){
+        const controller = new nivelController();
+        return controller.deleteById(req, res);
     }
 
 }

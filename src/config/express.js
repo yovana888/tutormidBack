@@ -1,6 +1,7 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
+import fileUpload from 'express-fileupload';
 require("dotenv").config();
 import routes from '../routers';
 import { errors } from 'celebrate'
@@ -19,7 +20,8 @@ class Server {
     middlewares(){
         this.app.use(express.json());
         this.app.use(morgan("dev"));
-        this.app.use(cors({origin:"*"}))
+        this.app.use(cors({origin:"*"}));
+        this.app.use(fileUpload());
     }
 
     routes(){

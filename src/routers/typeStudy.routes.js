@@ -11,6 +11,7 @@ class TypeStudyRouter{
                           .post('/',typeStudyValidation.createRecord(), this.create)
                           .get('/:id', this.getById)
                           .patch('/:id',typeStudyValidation.updateRecord(), this.updateById)
+                          .delete('/:id', this.deleteById)
     }
 
     async all(req, res){
@@ -31,6 +32,11 @@ class TypeStudyRouter{
     async updateById(req, res){
         const controller = new typeStudyController();
         return controller.updateById(req, res);
+    }
+
+    async deleteById(req, res){
+        const controller = new typeStudyController();
+        return controller.deleteById(req, res);
     }
 
 }

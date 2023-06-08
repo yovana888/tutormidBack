@@ -1,21 +1,25 @@
-import course from "../models/course.models";
+import user from "../models/user.model";
 import { IdException } from "../exceptions/id.exceptions";
-import { IdCategoryException } from "../exceptions/idCategoy.exceptions";
-import categoryController from "./category.controller";
+import { ErrorException } from "../exceptions/error.exceptions";
+import rolController from "./rol.controller";
+import { isValidHttpUrl, isValidPassword} from '../utils/url.utils';
+import BucketS3 from '../providers/s3.providers'
 
 import mongoose from "mongoose";
-class CourseController {
+class UserController {
   constructor() {
-    this.model = course;
+    this.model = user;
+    this.bucket = new BucketS3('avatars');
   }
 
   async listRecords(req, res) {
     try {
       const records = await this.model
         .find({ status: true })
-        .populate("idCategory", {
+        .populate("idRol", {
           name: 1,
         });
+    console
       return res.status(200).json(records);
     } catch (error) {
       return res.status(500).json({ message: error.message });
@@ -24,10 +28,14 @@ class CourseController {
 
   async createRecord(req, res) {
     try {
-      const idCategory = req.body.idCategory;
-      const controller = new categoryController();
-      const isValid = await controller.existId(idCategory);
-      if (!isValid) throw new IdCategoryException();
+      const {idRol, password} = req.body;
+      const controller = new rolController();
+      const isValid = await controller.existId(idRol);
+      if (!isValid) throw new ErrorException('IdRol Not Found',404);
+      if(password!=='' && password){
+            const isValid = isValidPassword(password);
+            if(isValid!==true) throw new ErrorException(isValid,404);
+      }
       const newData = this.model({ ...req.body });
       await newData.save();
       return res.status(200).json(newData);
@@ -40,7 +48,7 @@ class CourseController {
     try {
       const id = req.params.id;
       if (!mongoose.Types.ObjectId.isValid(id)) throw new IdException();
-      const data = await this.model.findById(id).populate("idCategory", {
+      const data = await this.model.findById(id).populate("idRol", {
         name: 1,
       });
       if (!data) throw new IdException();
@@ -54,11 +62,17 @@ class CourseController {
     try {
       const id = req.params.id;
       const body = req.body;
-      const idCategory = req.body.idCategory;
+      const {idRol, photoUrl} = body;
       const controller = new categoryController();
-      if(idCategory){
-          const isValid = await controller.existId(idCategory);
+
+      if(idRol){
+          const isValid = await controller.existId(idRol);
           if (!isValid) throw new IdCategoryException();
+      }
+
+      if(photoUrl){
+        const isValidUrl = isValidHttpUrl(photoUrl);
+        if (!isValidUrl) throw new ErrorException('url photo invalid',400);
       }
 
       if (!mongoose.Types.ObjectId.isValid(id)) throw new IdException();
@@ -73,15 +87,18 @@ class CourseController {
     }
   }
 
-  async searchByName(req, res) {
-    try {
-      const { name } = req.query;
-      const data = await this.model.find({ 'name' : { '$regex' : name, '$options' : 'i' } } );
-      return res.status(200).json(data.length > 0 ? data : []);
-    } catch (error) {
-      return res.status(500).json({ message: error.message });
+  async uploadImage(req, res){
+    try{
+        let { body, files } = req;
+        const { photo } = files;
+        const { idUser } = body;
+        console.log(photo, idUser, 'nanita' )
+        //const photoUrl = await this.bucket.uploadFile(photo, idUser);
+        return res.status(200).json({message:'process'}); 
+    }catch{
+        return res.status(500).json({ message: error.message });
     }
-  }
+}
 
   async deleteById(req, res) {
     try {
@@ -98,4 +115,4 @@ class CourseController {
   }
 }
 
-export default CourseController;
+export default UserController;

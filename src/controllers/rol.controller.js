@@ -68,6 +68,15 @@ class RolController {
       return res.status(error?.code || 500).json({ message: error.message });
     }
   }
+
+  async existId(id){
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return false;
+      }else{
+        const data = await this.model.findById(id);
+        return !data ? false : true;
+      }
+  }
 }
 
 export default RolController;

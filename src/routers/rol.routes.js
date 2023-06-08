@@ -11,6 +11,7 @@ class RolRouter{
                           .post('/',rolValidation.createRecord(), this.create)
                           .get('/:id', this.getById)
                           .patch('/:id',rolValidation.updateRecord(), this.updateById)
+                          .delete('/:id', this.deleteById)
     }
 
     async all(req, res){
@@ -31,6 +32,11 @@ class RolRouter{
     async updateById(req, res){
         const controller = new RolController();
         return controller.updateById(req, res);
+    }
+
+    async deleteById(req, res){
+        const controller = new RolController();
+        return controller.deleteById(req, res);
     }
 
 }

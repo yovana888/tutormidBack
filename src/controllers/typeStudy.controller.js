@@ -8,7 +8,7 @@ class TypeStudyController {
 
   async listRecords(req, res) {
     try {
-      const records = await this.model.find();
+      const records = await this.model.find({ status: true });
       return res.status(200).json(records);
     } catch (error) {
       return res.status(500).json({ message: error.message });

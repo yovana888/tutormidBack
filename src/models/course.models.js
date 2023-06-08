@@ -28,4 +28,4 @@ class CategoryModel extends Model {}
 
 schema.loadClass(CategoryModel);
 
-export default model('Category', schema);
+export default model('Course', schema);

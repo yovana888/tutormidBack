@@ -8,7 +8,7 @@ class CategoryController {
 
   async listRecords(req, res) {
     try {
-      const records = await this.model.find();
+      const records = await this.model.find({ status: true });
       return res.status(200).json(records);
     } catch (error) {
       return res.status(500).json({ message: error.message });
@@ -36,6 +36,16 @@ class CategoryController {
     } catch (error) {
       return res.status(error?.code || 500).json({ message: error.message });
     }
+  }
+
+  async existId(id){
+    console.log(!mongoose.Types.ObjectId.isValid(id),'ver')
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return false;
+      }else{
+        const data = await this.model.findById(id);
+        return !data ? false : true;
+      }
   }
 
   async updateById(req, res) {
